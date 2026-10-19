@@ -1,4 +1,4 @@
-def str_to_int(text: str, mesaj_eroare: str) -> int:
+def str_to_int(text: str) -> int:
     """
         O functie care transforma un string intr-un numar intreg
         si arunca o eroare de tip ValueError daca nu se poate
@@ -6,15 +6,15 @@ def str_to_int(text: str, mesaj_eroare: str) -> int:
     try:
         return int(text)
     except ValueError:
-        raise ValueError(mesaj_eroare)
+        raise ValueError("Numarul trebuie sa fie intreg!")
 
 def test_str_to_int():
-    assert str_to_int('2', 'mesaj') == 2
-    assert str_to_int('10', 'mesaj') == 10
-    assert str_to_int('0', 'mesaj') == 0
-    assert str_to_int('-1', 'mesaj') == -1
+    assert str_to_int('2') == 2
+    assert str_to_int('10') == 10
+    assert str_to_int('0') == 0
+    assert str_to_int('-1') == -1
     try:
-        str_to_int('a', 'mesaj')
+        str_to_int('a')
         assert False
     except ValueError:
         pass
@@ -30,7 +30,7 @@ def validare_scoruri(parametri: list) -> list:
         raise ValueError("Lista trebuie sa contina exact 10 scoruri!")
     scoruri = []
     for x in range(len(parametri)):
-        numar = str_to_int(parametri[x],"Elementele listei trebuie sa fie numere intre 1 si 10!")
+        numar = str_to_int(parametri[x])
         if numar < 1 or numar > 10:
             raise ValueError("Elementele listei trebuie sa fie numere intre 1 si 10!")
         scoruri.append(numar)
@@ -110,7 +110,7 @@ def validare_pozitie(lista_participanti: list, pozitie: str) -> int:
         posibila aceasta transformare, in acelasi timp 
         asigurand faptul ca pozitia exista in lista.
     """
-    pozitie = str_to_int(pozitie, "Pozitia trebuie sa fie un nr intreg!")
+    pozitie = str_to_int(pozitie)
     if pozitie < 1 or pozitie > len(lista_participanti) + 1:
         raise ValueError(f"Pozitia trebuie sa fie intre 1 si {len(lista_participanti)}!")
     return pozitie - 1
@@ -299,46 +299,21 @@ def ui_inlocuieste_scor(lista_participanti: list, parametri: list):
         print(error)
 
 
-
-def validare_medie(medie: str) -> float:
-    """
-        Aceasta functie primeste media in tip string
-        si o transforma in tip float, daca este posibila
-        transformarea.
-    """
-    try:
-        return float(medie)
-    except ValueError:
-        raise ValueError("Media trebuie sa fie un numar real!")
-
-def test_validare_medie():
-    """
-        functie de test pt validare_medie()
-    """
-    assert validare_medie('8.0') == 8.0
-    assert validare_medie('8.55') == 8.55
-    assert validare_medie('9.25') == 9.25
-    try:
-        validare_medie('abc')
-        assert False
-    except ValueError:
-        pass
-
-def calculare_medii(lista_participanti: list) -> list:
+def calculare_scoruri_totale(lista_participanti: list) -> list:
     """
         Aceasta functie primeste lista cu scorurile
         participantilor si returneaza o lista cu
-        mediile acestora.
+        scorurile totale ale acestora.
     """
-    lista_medii = []
+    lista_scoruri = []
     for x in lista_participanti:
-        medie_participant = sum(x) / len(x)
-        lista_medii.append(medie_participant)
-    return lista_medii
+        scor_participant = sum(x)
+        lista_scoruri.append(scor_participant)
+    return lista_scoruri
 
-def test_calculare_medii():
+def test_calculare_scoruri_totale():
     """
-        functie de test pt calculare_medie()
+        functie de test pt calculare_scoruri_totale()
     """
     lista_test = [
     [4, 6, 5, 5, 3, 7, 8, 2, 5, 5],  
@@ -346,43 +321,46 @@ def test_calculare_medii():
     [7, 7, 8, 6, 9, 5, 10, 4, 7, 7], 
     [8, 8, 9, 7, 10, 6, 8, 8, 7, 9]  
 ]
-    assert calculare_medii(lista_test) == [5.0, 6.0, 7.0, 8.0]
-    assert len(calculare_medii(lista_test)) == 4
+    assert calculare_scoruri_totale(lista_test) == [50, 60, 70, 80]
+    assert len(calculare_scoruri_totale(lista_test)) == 4
 
-def participanti_sub_medie(medii_participanti: list, medie_target: float) -> list:
+def participanti_sub_scor(scoruri_participanti: list, scor_target: int) -> list:
     """
-        Aceasta functie preia lista cu medii din functia
-        calculare_medii() si afla care participanti au
-        media sub o medie data.
+        Aceasta functie preia lista cu scoruri din functia
+        calculare_scoruri_totale() si afla care participanti au
+        scorul sub un scor dat.
     """
     participanti_ok = []
     index_participant = 1
-    for medie_participant in medii_participanti:
-        if medie_participant < medie_target:
+    for scor_participant in scoruri_participanti:
+        if scor_participant < scor_target:
             participanti_ok.append(index_participant)
         index_participant += 1
     return participanti_ok
 
-def test_participanti_sub_medie():
-    medii_test = [5.0, 6.0, 7.0, 8.0]
-    medie_target_test = 6.5
-    assert participanti_sub_medie(medii_test, medie_target_test) == [1,2]
-    assert len(participanti_sub_medie(medii_test, medie_target_test)) == 2
-    assert participanti_sub_medie([], 10) == []
+def test_participanti_sub_scor():
+    """
+        functie de test pt participanti_sub_scor()
+    """
+    scoruri_test = [50, 60, 70, 80]
+    scor_target_test = 65
+    assert participanti_sub_scor(scoruri_test, scor_target_test) == [1,2]
+    assert len(participanti_sub_scor(scoruri_test, scor_target_test)) == 2
+    assert participanti_sub_scor([], 10) == []
 
-def ui_participanti_sub_medie(lista_participanti: list, parametri: list):
+def ui_participanti_sub_scor(lista_participanti: list, parametri: list):
     """
         Aceasta functie primeste parametrii de la utilizator
-        si printeaza numarul de participanti care au o medie 
-        a scorurilor mai mica decat o medie data.
+        si printeaza numarul de participanti care au scorurile 
+        totale mai mici decat un scor dat.
     """
     try:
         if len(parametri) != 1:
-            raise ValueError("Comanda 'medie_mai_mica_decat' are nevoie de un singur parametru!")
-        medie_valida = validare_medie(parametri[0]) 
-        medii_participanti = calculare_medii(lista_participanti)     
-        rezultat = participanti_sub_medie(medii_participanti, medie_valida)
-        print(f"Participantii care au o medie a scorurilor mai mica decat {medie_valida} sunt {rezultat}.")
+            raise ValueError("Comanda 'scor_mai_mic_decat' are nevoie de un singur parametru!")
+        scor_valid = str_to_int(parametri[0]) 
+        scoruri_participanti = calculare_scoruri_totale(lista_participanti)     
+        rezultat = participanti_sub_scor(scoruri_participanti, scor_valid)
+        print(f"Participantii care au scorurile totale mai mici decat {scor_valid} sunt {rezultat}.")
     except ValueError as error:
         print(error)
 
@@ -391,21 +369,21 @@ def ui_participanti_sub_medie(lista_participanti: list, parametri: list):
 def in_ordine(lista_participanti: list) -> list:
     """
         Aceasta functie sorteaza participantii in ordine
-        cresc. in functie de media lor. Am optat pt 
+        cresc. in functie de scorurile lor. Am optat pt 
         sortarea manuala pt a nu pierde indecsii 
         participantilor in timpul sortarii. Folosirea
         metodei sort() ar fi pierdut indecsii.
     """
-    medii = calculare_medii(lista_participanti)
+    scoruri = calculare_scoruri_totale(lista_participanti)
     lista_indici = []
-    for i in range(len(medii)):
+    for i in range(len(scoruri)):
         lista_indici.append(i + 1)
-    for i in range(len(medii) - 1):
-        for j in range(i + 1, len(medii)):
-            if medii[i] > medii[j]:
-                aux_medie = medii[i]
-                medii[i] = medii[j]
-                medii[j] = aux_medie
+    for i in range(len(scoruri) - 1):
+        for j in range(i + 1, len(scoruri)):
+            if scoruri[i] > scoruri[j]:
+                aux_scoruri = scoruri[i]
+                scoruri[i] = scoruri[j]
+                scoruri[j] = aux_scoruri
 
                 aux_index = lista_indici[i]
                 lista_indici[i] = lista_indici[j]
@@ -413,6 +391,9 @@ def in_ordine(lista_participanti: list) -> list:
     return lista_indici          
 
 def test_in_ordine():
+    """
+        functie de test pt in_ordine()
+    """
     lista_test = [
         [8, 8, 9, 7, 10, 6, 8, 8, 7, 9], # media 8
         [4, 6, 5, 5, 3, 7, 8, 2, 5, 5],  # media 5
@@ -422,50 +403,60 @@ def test_in_ordine():
     assert in_ordine(lista_test) == [2, 3, 4, 1]
 
 def ui_in_ordine(lista_participanti: list, parametri: list):
+    """
+        Aceasta functie primeste lista de participanti
+        si o ordoneaza in functie de scorurile totale
+        ale participantilor.
+    """
     try:
         if len(parametri) != 0:
             raise ValueError("Comanda 'in_ordine' nu are parametri!")
         ordonat = in_ordine(lista_participanti)
-        print(f"Participantii in ordinea mediilor: {ordonat}")
+        print(f"Participantii in ordinea scorurilor totale: {ordonat}")
     except ValueError as error:
         print(error)
 
 
 
-def participanti_peste_medie(lista_participanti: list, medie_target: float) ->list:
+def participanti_peste_scor(lista_participanti: list, scor_target: int) ->list:
     """
         Aceasta functie returneaza o lista cu participantii
-        care au o medie mai mare decat un numar dat, participantii
+        care au un scor total mai mare decat un numar dat, participantii
         fiind sortati in ordine crescatoare.
     """
     participanti_sortati = in_ordine(lista_participanti)
-    medii = calculare_medii(lista_participanti)
+    scoruri = calculare_scoruri_totale(lista_participanti)
     rezultat = []
     for participant in participanti_sortati:
-        medie_participant = medii[participant - 1]
-        if medie_participant > medie_target:
+        scor_participant = scoruri[participant - 1]
+        if scor_participant > scor_target:
             rezultat.append(participant)
     return rezultat
 
-def test_participanti_peste_medie():
+def test_participanti_peste_scor():
     """
-        functie de test pt participanti_peste_medie.
+        functie de test pt participanti_peste_scor().
     """
     lista_test = [
-        [8, 8, 9, 7, 10, 6, 8, 8, 7, 9], # media 8
-        [4, 6, 5, 5, 3, 7, 8, 2, 5, 5],  # media 5
-        [6, 6, 7, 5, 8, 4, 9, 1, 10, 4], # media 6
-        [7, 7, 8, 6, 9, 5, 10, 4, 7, 7]  # media 7
+        [8, 8, 9, 7, 10, 6, 8, 8, 7, 9], 
+        [4, 6, 5, 5, 3, 7, 8, 2, 5, 5],  
+        [6, 6, 7, 5, 8, 4, 9, 1, 10, 4], 
+        [7, 7, 8, 6, 9, 5, 10, 4, 7, 7]  
     ]
-    assert participanti_peste_medie(lista_test, 6.7) == [4, 1]
+    assert participanti_peste_scor(lista_test, 67) == [4, 1]
 
-def ui_participanti_peste_medie(lista_participanti: list, parametri: list):
+def ui_participanti_peste_scor(lista_participanti: list, parametri: list):
+    """
+        Aceasta functie afiseaza o lista cu participantii
+        care au un scor total mai mare decat un scor dat,
+        in ordine.
+    """
     try:
         if len(parametri) != 1:
-            raise ValueError("Comanda 'medie_mai_mare_decat' are un singur parametru!")
-        medie_valida = validare_medie(parametri[0])
-        rezultat = participanti_peste_medie(lista_participanti, medie_valida)
-        print(f"Participantii care au o medie a scorurilor mai mare decat {medie_valida} sunt {rezultat} (in ordine).")     
+            raise ValueError("Comanda 'scor_mai_mare_decat' are un singur parametru!")
+        scor_valid = str_to_int(parametri[0])
+        rezultat = participanti_peste_scor(lista_participanti, scor_valid)
+        print(f"Participantii care au o medie a scorurilor mai mare decat {scor_valid} sunt {rezultat} (in ordine).")     
     except ValueError as error:
         print(error)
 
@@ -483,11 +474,11 @@ def rulare_toate_testele():
     test_sterge_scor()
     test_sterge_interval()
     test_inlocuieste_scor()
-    test_validare_medie()
-    test_calculare_medii()
-    test_participanti_sub_medie()
+    test_validare_scoruri()
+    test_calculare_scoruri_totale()
+    test_participanti_sub_scor()
     test_in_ordine()
-    test_participanti_peste_medie()
+    test_participanti_peste_scor()
 
 def print_list(lista_participanti, b):
     print(lista_participanti) # o functie pt printarea listei
@@ -497,10 +488,10 @@ def main():
         Functia in care ruleaza codul.
     """
     lista_participanti = [
-        [8, 8, 9, 7, 10, 6, 8, 8, 7, 9], # media 8
-        [4, 6, 5, 5, 3, 7, 8, 2, 5, 5],  # media 5
-        [6, 6, 7, 5, 8, 4, 9, 1, 10, 4], # media 6
-        [7, 7, 8, 6, 9, 5, 10, 4, 7, 7]  # media 7
+        [8, 8, 9, 7, 10, 6, 8, 8, 7, 9], 
+        [4, 6, 5, 5, 3, 7, 8, 2, 5, 5],  
+        [6, 6, 7, 5, 8, 4, 9, 1, 10, 4], 
+        [7, 7, 8, 6, 9, 5, 10, 4, 7, 7]  
     ] # lista de liste cu scorurile participantilor
     comenzi = {
         "list": print_list,
@@ -509,9 +500,9 @@ def main():
         "sterge": ui_sterge_scor,
         "sterge_interval": ui_sterge_interval,
         "inlocuieste_scor": ui_inlocuieste_scor,
-        "medie_mai_mica_decat": ui_participanti_sub_medie,
+        "scor_mai_mic_decat": ui_participanti_sub_scor,
         "in_ordine": ui_in_ordine,
-        "medie_mai_mare_decat": ui_participanti_peste_medie
+        "scor_mai_mare_decat": ui_participanti_peste_scor
     }
     while True:
         text_comanda = input(">>>")
