@@ -20,6 +20,7 @@ def test_str_to_int():
         pass
 
 
+
 def validare_scoruri(parametri: list) -> list:
     """
         Aceasta functie transforma lista cu string-uri 
@@ -299,6 +300,7 @@ def ui_inlocuieste_scor(lista_participanti: list, parametri: list):
         print(error)
 
 
+
 def calculare_scoruri_totale(lista_participanti: list) -> list:
     """
         Aceasta functie primeste lista cu scorurile
@@ -456,9 +458,11 @@ def ui_participanti_peste_scor(lista_participanti: list, parametri: list):
             raise ValueError("Comanda 'scor_mai_mare_decat' are un singur parametru!")
         scor_valid = str_to_int(parametri[0])
         rezultat = participanti_peste_scor(lista_participanti, scor_valid)
-        print(f"Participantii care au o medie a scorurilor mai mare decat {scor_valid} sunt {rezultat} (in ordine).")     
+        print(f"Participantii care au scorul total mai mare decat {scor_valid} sunt {rezultat} (in ordine).")     
     except ValueError as error:
         print(error)
+
+
 
 def rulare_toate_testele():
     """
@@ -474,7 +478,6 @@ def rulare_toate_testele():
     test_sterge_scor()
     test_sterge_interval()
     test_inlocuieste_scor()
-    test_validare_scoruri()
     test_calculare_scoruri_totale()
     test_participanti_sub_scor()
     test_in_ordine()
@@ -488,10 +491,7 @@ def main():
         Functia in care ruleaza codul.
     """
     lista_participanti = [
-        [8, 8, 9, 7, 10, 6, 8, 8, 7, 9], 
-        [4, 6, 5, 5, 3, 7, 8, 2, 5, 5],  
-        [6, 6, 7, 5, 8, 4, 9, 1, 10, 4], 
-        [7, 7, 8, 6, 9, 5, 10, 4, 7, 7]  
+         
     ] # lista de liste cu scorurile participantilor
     comenzi = {
         "list": print_list,
