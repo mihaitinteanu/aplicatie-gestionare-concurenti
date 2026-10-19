@@ -8,6 +8,17 @@ def str_to_int(text: str, mesaj_eroare: str) -> int:
     except ValueError:
         raise ValueError(mesaj_eroare)
 
+def test_str_to_int():
+    assert str_to_int('2', 'mesaj') == 2
+    assert str_to_int('10', 'mesaj') == 10
+    assert str_to_int('0', 'mesaj') == 0
+    assert str_to_int('-1', 'mesaj') == -1
+    try:
+        str_to_int('a', 'mesaj')
+        assert False
+    except ValueError:
+        pass
+
 
 def validare_scoruri(parametri: list) -> list:
     """
@@ -274,12 +285,104 @@ def ui_inlocuieste_scor(lista_participanti: list, parametri: list):
         Aceasta functie este apelata in main(), primeste parametrii
         de la utilizator si apeleaza functiile auxiliare pt a 
         prelucra lista pe care o afiseaza la final, dupa modificari.
+        Primul parametru este pozitia participantului in lista, iar
+        urmatorii 10 sunt scorurile noi.
     """
     try:
+        if len(parametri) != 11:
+            raise ValueError("Comanda 'inlocuieste_scor' are nevoie de 11 parametri!")
         pozitie_participant = validare_pozitie(lista_participanti, parametri[0])
         scoruri_noi = validare_scoruri(parametri[1:])
         inlocuieste_scor(lista_participanti, pozitie_participant, scoruri_noi)
         print(f"Lista participantilor dupa modificare este: {lista_participanti}")
+    except ValueError as error:
+        print(error)
+
+
+
+def validare_medie(medie: str) -> int:
+    """
+        Aceasta functie primeste media in tip string
+        si o transforma in tip float, daca este posibila
+        transformarea.
+    """
+    try:
+        return float(medie)
+    except ValueError:
+        raise ValueError("Media trebuie sa fie un numar real!")
+
+def test_validare_medie():
+    """
+        functie de test pt validare_medie()
+    """
+    assert validare_medie('8.0') == 8.0
+    assert validare_medie('8.55') == 8.55
+    assert validare_medie('9.25') == 9.25
+    try:
+        validare_medie('abc')
+        assert False
+    except ValueError:
+        pass
+
+def calculare_medii(lista_participanti: list) -> list:
+    """
+        Aceasta functie primeste lista cu scorurile
+        participantilor si returneaza o lista cu
+        mediile acestora.
+    """
+    lista_medii = []
+    for x in lista_participanti:
+        medie_participant = sum(x) / len(x)
+        lista_medii.append(medie_participant)
+    return lista_medii
+
+def test_calculare_medii():
+    """
+        functie de test pt calculare_medie()
+    """
+    lista_test = [
+    [4, 6, 5, 5, 3, 7, 8, 2, 5, 5],  
+    [6, 6, 7, 5, 8, 4, 9, 1, 10, 4], 
+    [7, 7, 8, 6, 9, 5, 10, 4, 7, 7], 
+    [8, 8, 9, 7, 10, 6, 8, 8, 7, 9]  
+]
+    assert calculare_medii(lista_test) == [5.0, 6.0, 7.0, 8.0]
+    assert len(calculare_medii(lista_test)) == 4
+
+def participanti_sub_medie(medii_participanti: list, medie_target: int) -> list:
+    """
+        Aceasta functie preia lista cu medii din functia
+        calculare_medii() si afla care participanti au
+        media sub o medie data.
+    """
+    participanti_ok = []
+    index_participant = 1
+    for medie_participant in medii_participanti:
+        if medie_participant < medie_target:
+            participanti_ok.append(index_participant)
+        index_participant += 1
+    return participanti_ok
+
+def test_participanti_sub_medie():
+    medii_test = [5.0, 6.0, 7.0, 8.0]
+    medie_target_test = 6.5
+    assert participanti_sub_medie(medii_test, medie_target_test) == [1,2]
+    assert len(participanti_sub_medie(medii_test, medie_target_test)) == 2
+    assert participanti_sub_medie([], 10) == []
+
+def ui_participanti_sub_medie(lista_participanti: list, parametri: list):
+    """
+        Aceasta functie primeste parametrii de la utilizator
+        si printeaza numarul de participanti care au o medie 
+        a scorurilor mai mica decat o medie data.
+    """
+    try:
+        if len(parametri) != 1:
+            raise ValueError("Comanda 'medie_mai_mica_decat' are nevoie de un singur parametru!")
+        medie_valida = validare_medie(parametri[0]) 
+        medii_participanti = calculare_medii(lista_participanti)     
+        rezultat = participanti_sub_medie(medii_participanti, medie_valida)
+        print(f"Participantii care au o medie a scorurilor mai mica decat {medie_valida} sunt {rezultat}.")
     except ValueError as error:
         print(error)
 
@@ -291,6 +394,7 @@ def rulare_toate_testele():
         toate functiile de tip test si de a rula inainte
         de functia main()
     """
+    test_str_to_int()
     test_validare_scoruri()
     test_adauga_scor()
     test_validare_pozitie()
@@ -298,6 +402,9 @@ def rulare_toate_testele():
     test_sterge_scor()
     test_sterge_interval()
     test_inlocuieste_scor()
+    test_validare_medie()
+    test_calculare_medii()
+    test_participanti_sub_medie()
 
 
 def main():
@@ -310,7 +417,8 @@ def main():
         "insert": ui_insert_scor,
         "sterge": ui_sterge_scor,
         "sterge_interval": ui_sterge_interval,
-        "inlocuieste_scor": ui_inlocuieste_scor
+        "inlocuieste_scor": ui_inlocuieste_scor,
+        "medie_mai_mica_decat": ui_participanti_sub_medie
     }
     while True:
         text_comanda = input(">>>")
