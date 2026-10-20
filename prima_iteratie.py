@@ -464,6 +464,41 @@ def ui_participanti_peste_scor(lista_participanti: list, parametri: list):
 
 
 
+def filtrare_multiplu(lista_participanti: list, multiplu: int) -> list:
+    lista_participanti_filtrati = []
+    scoruri = calculare_scoruri_totale(lista_participanti)
+    index = 0
+    for scor in scoruri:
+        if scor % multiplu == 0:
+            lista_participanti_filtrati.append(lista_participanti[index])
+        index += 1
+    return lista_participanti_filtrati
+
+def test_filtrare_multiplu():
+    lista_test = [
+        [4, 6, 5, 5, 3, 7, 8, 2, 5, 5],  
+        [6, 6, 7, 5, 8, 4, 9, 1, 10, 4], 
+        [7, 7, 8, 6, 9, 5, 10, 4, 7, 7], 
+        [8, 8, 9, 7, 10, 6, 8, 8, 7, 10]
+    ]
+    assert filtrare_multiplu(lista_test, 10) == [
+        [4, 6, 5, 5, 3, 7, 8, 2, 5, 5],  
+        [6, 6, 7, 5, 8, 4, 9, 1, 10, 4], 
+        [7, 7, 8, 6, 9, 5, 10, 4, 7, 7]
+    ]
+
+def ui_filtrare_multiplu(lista_participanti: list, parametri: list):
+    try:
+        multiplu = str_to_int(parametri[0])
+        if len(parametri) != 1:
+            raise ValueError("Comanda 'filtrare_multiplu' are un singur parametru!")
+        rezultat = filtrare_multiplu(lista_participanti, multiplu)
+        lista_participanti[:] = rezultat
+        print(f"Lista dupa filtrare este: {lista_participanti}")
+    except ValueError as error:
+        print(error)    
+
+
 def rulare_toate_testele():
     """
         Aceasta functie are rolul de a cuprinde
@@ -482,6 +517,7 @@ def rulare_toate_testele():
     test_participanti_sub_scor()
     test_in_ordine()
     test_participanti_peste_scor()
+    test_filtrare_multiplu()
 
 def print_list(lista_participanti, b):
     print(lista_participanti) # o functie pt printarea listei
@@ -491,7 +527,10 @@ def main():
         Functia in care ruleaza codul.
     """
     lista_participanti = [
-         
+        [4, 6, 5, 5, 3, 7, 8, 2, 5, 5],  
+        [6, 6, 7, 5, 8, 4, 9, 1, 10, 4], 
+        [7, 7, 8, 6, 9, 5, 10, 4, 7, 7], 
+        [8, 8, 9, 7, 10, 6, 8, 8, 7, 10]
     ] # lista de liste cu scorurile participantilor
     comenzi = {
         "list": print_list,
@@ -502,7 +541,8 @@ def main():
         "inlocuieste_scor": ui_inlocuieste_scor,
         "scor_mai_mic_decat": ui_participanti_sub_scor,
         "in_ordine": ui_in_ordine,
-        "scor_mai_mare_decat": ui_participanti_peste_scor
+        "scor_mai_mare_decat": ui_participanti_peste_scor,
+        "filtrare_multiplu": ui_filtrare_multiplu
     }
     while True:
         text_comanda = input(">>>")
